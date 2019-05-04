@@ -7,9 +7,11 @@ use Symfony\Component\HttpFoundation\Request;
 $router->get('/', function(Application $app, Request $request) {
 
 	// Get an interval list (NOT need to sort here, all sort logic is executing on JS)
-	$intervals = $app->interval_model->get(/*function($query){
-		return $query->orderBy('date_start');
-	}*/);
+	$intervals = $app->interval_model->get(function($query){
+		return $query;
+		//return $query->orderBy('date_start');
+		//return $query->where ('date_start = \'2011-02-03\'');
+	});
 
 	return $app->view->make('index')
 		->with('intervals', $intervals);

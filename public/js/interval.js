@@ -120,10 +120,11 @@ class IntervalWidget {
 		var item = new IntervalItem(this, data);
 
 		// Find a next item: before it the current item will be pushed
+		// Items is with the ID sorting by default, we need to sort by date_start
 		var next_item = null; let d_min = 0;
 		for (let i in this.items) {
 			let new_d_min = this.items[i].sort - item.sort;
-			if (new_d_min >= 0) {
+			if (new_d_min > 0) {
 				if (!d_min) {
 					d_min = new_d_min;
 				}
@@ -183,11 +184,11 @@ class IntervalItem {
 		this.data = data;
 
 		// Start & end timestamps
-		//this.ts_start	= (new Date(data.date_start).getTime() / 1000);
-		//this.ts_end		= (new Date(data.date_end).getTime() / 1000);
+		this.ts_start = (new Date(data.date_start).getTime() / 1000);
+		//this.ts_end = (new Date(data.date_end).getTime() / 1000);
 
 		// Sort value
-		this.sort = data.date_start; //(this.ts_start +'.'+ this.data.id)*1;
+		this.sort = this.ts_start; //(this.ts_start +'.'+ this.data.id)*1;
 
 		this.initialize();
 	}
@@ -366,7 +367,7 @@ class IntervalResult {
 		for (var i in this.widget.items) {
 			items.push (this.widget.items[i]);
 		}
-		console.log(items);
+		// console.log(items);
 
 
 
