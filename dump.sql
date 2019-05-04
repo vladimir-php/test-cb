@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `intervals` (
   `date_end` date NOT NULL,
   `price` double(8,2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*!40000 ALTER TABLE `intervals` DISABLE KEYS */;
 INSERT INTO `intervals` (`id`, `date_start`, `date_end`, `price`) VALUES
@@ -24,7 +24,8 @@ INSERT INTO `intervals` (`id`, `date_start`, `date_end`, `price`) VALUES
 	(113, '2011-02-03', '2016-02-20', 77.77),
 	(114, '2009-02-20', '2011-02-02', 0.12),
 	(115, '2015-12-20', '2020-05-04', 111.11),
-	(116, '2012-02-21', '2016-06-20', 7.67);
+	(116, '2012-02-21', '2016-06-20', 7.67),
+	(117, '2011-02-03', '2016-04-04', 88.88);
 /*!40000 ALTER TABLE `intervals` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

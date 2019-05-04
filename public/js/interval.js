@@ -389,7 +389,7 @@ class IntervalResult {
 					new_list.push(
 						new IntervalResultItem(
 							interval.date_start,
-							new_interval.date_start,
+							new_interval.dateStartBefore(),
 							interval.price
 						)
 					);
@@ -402,7 +402,7 @@ class IntervalResult {
 				if (new_interval.hasEndIntersection(interval)) {
 					new_list.push(
 						new IntervalResultItem(
-							new_interval.date_end,
+							new_interval.dateEndAfter(),
 							interval.date_end,
 							interval.price
 						)
@@ -460,6 +460,18 @@ class IntervalResultItem {
 		// Timestamps
 		this.ts_start = this.date_start.getTime();
 		this.ts_end = this.date_end.getTime();
+	}
+
+	dateStartBefore () {
+		var new_date = new Date(this.ts_start);
+		new_date.setDate(new_date.getDate() - 1);
+		return new_date;
+	}
+
+	dateEndAfter () {
+		var new_date = new Date(this.ts_end);
+		new_date.setDate(new_date.getDate() + 1);
+		return new_date;
 	}
 
 	hasAbsorption (interval) {
