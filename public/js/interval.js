@@ -373,22 +373,19 @@ class IntervalResult {
 		for (let i in list) {
 			let interval = list[i];
 
-			// Has absorption : delete object
-			/*if (new_interval.date_start <= interval.date_start &&
-				new_interval.date_end >= interval.date_end
-			) {
-
-			}*/
-
-			// Has not intersection
-			if (new_interval.hasNotIntersection(interval) ) {
-				new_list.push(interval);
+			// Has absorption?
+			if (new_interval.hasAbsorption(interval) ) {
+				continue;
 			}
-			else {
+
+			// Has not intersection?
+			if (!new_interval.hasIntersection(interval)) {
+				new_list.push(interval);
+			} else {
 				is_added = true;
 
 				// Has date_start intersection
-				if (new_interval.hasStartIntersection(interval) ) {
+				if (new_interval.hasStartIntersection(interval)) {
 					new_list.push(
 						new IntervalResultItem(
 							interval.date_start,
@@ -398,11 +395,11 @@ class IntervalResult {
 					);
 				}
 
-				// Priority interval
+				// More priority interval
 				new_list.push(new_interval);
 
 				// Has date_end intersection
-				if (new_interval.hasEndIntersection(interval) ) {
+				if (new_interval.hasEndIntersection(interval)) {
 					new_list.push(
 						new IntervalResultItem(
 							new_interval.date_end,
@@ -414,7 +411,8 @@ class IntervalResult {
 
 			}
 
-			// Delete old objects @todo maybe easy to work only with structure instead an IntervalResultItem object
+			// Delete old objects
+			// @todo maybe easy to work only with structure instead an IntervalResultItem object
 			delete list[i];
 		}
 		if (!is_added) {
@@ -464,10 +462,17 @@ class IntervalResultItem {
 		this.ts_end = this.date_end.getTime();
 	}
 
-	hasNotIntersection (interval) {
+	hasAbsorption (interval) {
 		return (
-			this.ts_start > interval.ts_end ||
-			this.ts_end < interval.ts_start
+			this.ts_start <= interval.ts_start &&
+			this.ts_end >= interval.ts_end
+		);
+	}
+
+	hasIntersection (interval) {
+		return (
+			this.hasStartIntersection(interval) ||
+			this.hasEndIntersection(interval)
 		);
 	}
 
@@ -480,8 +485,8 @@ class IntervalResultItem {
 
 	hasEndIntersection (interval) {
 		return (
-			this.ts_end <= interval.ts_end &&
-			this.ts_end >= interval.ts_start
+			this.ts_end >= interval.ts_start &&
+			this.ts_end <= interval.ts_end
 		);
 	}
 
