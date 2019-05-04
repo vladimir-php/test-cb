@@ -38,7 +38,7 @@ class IntervalWidget {
 			{
 				title: 'Delete All',
 				action: () => {
-					if (confirm('Are you sure you want to delete this interval?') ) {
+					if (confirm('Are you sure you want to delete all intervals?') ) {
 						$.ajax({
 							url: '/interval/all',
 							type: 'DELETE',
@@ -183,9 +183,13 @@ class IntervalItem {
 		this.widget = widget;
 		this.data = data;
 
+		// Create date objects
+		this.date_start = new Date(data.date_start);
+		this.date_end = new Date(data.date_end);
+
 		// Start & end timestamps
-		this.ts_start = (new Date(data.date_start).getTime() / 1000);
-		//this.ts_end = (new Date(data.date_end).getTime() / 1000);
+		this.ts_start = this.date_start.getTime() / 1000;
+		//this.ts_end = this.date_end.getTime() / 1000;
 
 		// Sort value
 		this.sort = this.ts_start; //(this.ts_start +'.'+ this.data.id)*1;
@@ -361,17 +365,99 @@ class IntervalResult {
 		this.result = [];
 	}
 
+
+	addInterval (list, new_interval) {
+		let new_list = [];
+
+		let is_added = false;
+		for (let interval of list) {
+
+			// Has absorption : worked by default
+			/*if (new_interval.date_start <= interval.date_start &&
+				new_interval.date_end >= interval.date_end
+			) {
+
+			}*/
+
+			// Has not intersection
+			if (new_interval.date_start	> interval.date_end ||
+				new_interval.date_end	< interval.start
+			) {
+				new_list.push(interval);
+			}
+			else {
+				is_added = true;
+
+				// Has date_start intersection
+				if (new_interval.date_start	>= interval.date_start &&
+					new_interval.date_start <= interval.date_end
+				) {
+					new_list.push({
+						date_start: interval.date_start,
+						date_end: new_interval.date_start,
+						price: interval.price,
+					});
+				}
+
+				// Priority interval
+				new_list.push({
+					date_start: new_interval.date_start,
+					date_end: new_interval.date_end,
+					price: new_interval.price,
+				});
+
+				// Has date_end intersection
+				if (new_interval.date_end	<= interval.date_end &&
+					new_interval.date_end	>= interval.date_start
+				) {
+					new_list.push({
+						date_start: new_interval.date_end,
+						date_end: interval.date_end,
+						price: interval.price,
+					});
+				}
+
+			}
+
+		}
+		if (!is_added) {
+			new_list.push(new_interval);
+		}
+
+		return new_list;
+	}
+
+	clear () {
+		this.box.html('');
+	}
+
 	refresh () {
 
-		let items = [];
-		for (var i in this.widget.items) {
-			items.push (this.widget.items[i]);
+		this.clear();
+
+		let items = []; let list = [];
+		for (let i in this.widget.items) {
+			let item = this.widget.items[i];
+			list = this.addInterval (list, {
+				date_start	: item.date_start,
+				date_end	: item.date_end,
+				price		: item.data.price,
+			});
 		}
-		// console.log(items);
 
-
-
-		this.box.html('result: '+this.widget.items);
+		for (var interval of list) {
+			this.box.append(
+				$('<div />').html(
+					'( ' +
+					interval.date_start.format('Y-m-d')+
+					' - ' +
+					interval.date_end.format('Y-m-d')+
+					' : ' +
+					interval.price +
+					' )'
+				)
+			);
+		}
 	}
 
 }
