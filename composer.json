@@ -1,0 +1,34 @@
+{
+  "name": "cb/test",
+  "description": "A test project.",
+  "type": "project",
+  "require": {
+    "php": "^7.1.3"
+  },
+  "require-dev": {
+    "symfony/http-foundation": "^4.1",
+    "doctrine/dbal": "^2.6",
+    "phpunit/phpunit": "^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "System\\": "system/",
+      "App\\": "app/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
