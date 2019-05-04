@@ -370,9 +370,10 @@ class IntervalResult {
 		let new_list = [];
 
 		let is_added = false;
-		for (let interval of list) {
+		for (let i in list) {
+			let interval = list[i];
 
-			// Has absorption : worked by default
+			// Has absorption : delete object
 			/*if (new_interval.date_start <= interval.date_start &&
 				new_interval.date_end >= interval.date_end
 			) {
@@ -380,45 +381,41 @@ class IntervalResult {
 			}*/
 
 			// Has not intersection
-			if (new_interval.date_start	> interval.date_end ||
-				new_interval.date_end	< interval.start
-			) {
+			if (new_interval.hasNotIntersection(interval) ) {
 				new_list.push(interval);
 			}
 			else {
 				is_added = true;
 
 				// Has date_start intersection
-				if (new_interval.date_start	>= interval.date_start &&
-					new_interval.date_start <= interval.date_end
-				) {
-					new_list.push({
-						date_start: interval.date_start,
-						date_end: new_interval.date_start,
-						price: interval.price,
-					});
+				if (new_interval.hasStartIntersection(interval) ) {
+					new_list.push(
+						new IntervalResultItem(
+							interval.date_start,
+							new_interval.date_start,
+							interval.price
+						)
+					);
 				}
 
 				// Priority interval
-				new_list.push({
-					date_start: new_interval.date_start,
-					date_end: new_interval.date_end,
-					price: new_interval.price,
-				});
+				new_list.push(new_interval);
 
 				// Has date_end intersection
-				if (new_interval.date_end	<= interval.date_end &&
-					new_interval.date_end	>= interval.date_start
-				) {
-					new_list.push({
-						date_start: new_interval.date_end,
-						date_end: interval.date_end,
-						price: interval.price,
-					});
+				if (new_interval.hasEndIntersection(interval) ) {
+					new_list.push(
+						new IntervalResultItem(
+							new_interval.date_end,
+							interval.date_end,
+							interval.price
+						)
+					);
 				}
 
 			}
 
+			// Delete old objects @todo maybe easy to work only with structure instead an IntervalResultItem object
+			delete list[i];
 		}
 		if (!is_added) {
 			new_list.push(new_interval);
@@ -438,26 +435,64 @@ class IntervalResult {
 		let items = []; let list = [];
 		for (let i in this.widget.items) {
 			let item = this.widget.items[i];
-			list = this.addInterval (list, {
-				date_start	: item.date_start,
-				date_end	: item.date_end,
-				price		: item.data.price,
-			});
+			list = this.addInterval (list,
+				new IntervalResultItem(item.date_start, item.date_end, item.data.price)
+			);
 		}
 
 		for (var interval of list) {
 			this.box.append(
 				$('<div />').html(
-					'( ' +
-					interval.date_start.format('Y-m-d')+
-					' - ' +
-					interval.date_end.format('Y-m-d')+
-					' : ' +
-					interval.price +
-					' )'
+					interval.render()
 				)
 			);
 		}
+	}
+
+}
+
+
+class IntervalResultItem {
+
+	constructor (date_start, date_end, price) {
+		this.date_start = date_start;
+		this.date_end = date_end;
+		this.price = price;
+
+		// Timestamps
+		this.ts_start = this.date_start.getTime();
+		this.ts_end = this.date_end.getTime();
+	}
+
+	hasNotIntersection (interval) {
+		return (
+			this.ts_start > interval.ts_end ||
+			this.ts_end < interval.ts_start
+		);
+	}
+
+	hasStartIntersection (interval) {
+		return (
+			this.ts_start >= interval.ts_start &&
+			this.ts_start <= interval.ts_end
+		);
+	}
+
+	hasEndIntersection (interval) {
+		return (
+			this.ts_end <= interval.ts_end &&
+			this.ts_end >= interval.ts_start
+		);
+	}
+
+	render () {
+		return '( ' +
+			this.date_start.format('Y-m-d')+
+			' - ' +
+			this.date_end.format('Y-m-d')+
+			' : ' +
+			this.price +
+			' )';
 	}
 
 }
