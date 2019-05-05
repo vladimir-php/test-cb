@@ -8,9 +8,7 @@ $router->get('/', function(Application $app, Request $request) {
 
 	// Get an interval list (NOT need to sort here, all sort logic is executing on JS)
 	$intervals = $app->interval_model->get(function($query){
-		return $query; //->where ('id < 120');
-		//return $query->orderBy('date_start');
-		//return $query->where ('date_start < \'2010-01-05\'');
+		return $query; // there can be extra logic with the query (where, sorting etc.)
 	});
 
 	return $app->view->make('index')
@@ -23,6 +21,17 @@ $router->put('/interval', function(Application $app, Request $request) {
 	$data = json_decode($request->getContent(), true);
 
 	$interval = $app->interval_model->create($data);
+
+	/*
+	$validator = new \App\Validators\IntervalValidator($request);
+	$errors = $validator->validate([
+		'id'			=> 123,
+		'date_start'	=> "2010-01-01",
+		'date_end'		=> '2011-02-04',
+		'price'			=> 12.2
+	]);
+	dd ($errors);
+	*/
 
 	return $app->response->make($interval->toJson());
 });

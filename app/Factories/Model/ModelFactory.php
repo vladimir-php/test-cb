@@ -3,8 +3,8 @@
 namespace App\Factories\Model;
 
 
-use App\Model\Interval;
-use App\Model\Model;
+use App\Models\Interval;
+use App\Models\Model;
 use Doctrine\DBAL\Query\QueryBuilder;
 use phpDocumentor\Reflection\Types\Integer;
 use System\Containers\Application;

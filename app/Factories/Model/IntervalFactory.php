@@ -2,7 +2,7 @@
 
 namespace App\Factories\Model;
 
-use App\Model\Interval;
+use App\Models\Interval;
 
 /**
  * Class IntervalFactory

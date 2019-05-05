@@ -13,9 +13,9 @@ class IntervalWidget {
 
 		// --- BEGIN: Form create
 		this.form_create = new IntervalForm(this, new IntervalItem(this, {
-			date_start: "2010-01-01",
-			date_end: "2010-02-02",
-			price: 45.456
+			date_start: '',
+			date_end: '',
+			price: ''
 		}), [
 			{
 				title: 'Create',
@@ -286,7 +286,7 @@ class IntervalItem {
 					this.widget.removeItem(this.data.id);
 
 					// Refresh result
-					this.refreshResult();
+					this.widget.refreshResult();
 				}
 			});
 		}
@@ -353,6 +353,7 @@ class IntervalForm {
 }
 
 
+// @todo if there are many intrval records - move this logic to server side
 class IntervalResult {
 
 	constructor (widget) {
@@ -395,7 +396,6 @@ class IntervalResult {
 				new_list.push(interval);
 			}
 		}
-		this.debugOutput(new_list);
 		list = new_list; new_list = []; // List overriding
 		// END: merge intervals
 
@@ -428,7 +428,8 @@ class IntervalResult {
 				}
 
 				// More priority interval
-				if (!new_is_added) { // Prevent to duplicate interval whan it have intersections with two other intervals
+				// Prevent to duplicate interval when it have intersections with two other intervals
+				if (!new_is_added) {
 					new_list.push(new_interval);
 				}
 
