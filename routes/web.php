@@ -8,9 +8,9 @@ $router->get('/', function(Application $app, Request $request) {
 
 	// Get an interval list (NOT need to sort here, all sort logic is executing on JS)
 	$intervals = $app->interval_model->get(function($query){
-		return $query;
+		return $query; //->where ('id < 120');
 		//return $query->orderBy('date_start');
-		//return $query->where ('date_start = \'2011-02-03\'');
+		//return $query->where ('date_start < \'2010-01-05\'');
 	});
 
 	return $app->view->make('index')

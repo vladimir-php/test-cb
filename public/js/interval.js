@@ -366,10 +366,43 @@ class IntervalResult {
 	}
 
 
+	removeInterval (list, interval) {
+		for (let i in list) {
+			if (list[i].isEqual(interval) ) {
+				delete list[i];
+			}
+		}
+		return list;
+	}
+
+
 	addInterval (list, new_interval) {
 		let new_list = [];
 
-		let is_added = false;
+
+		// --- BEGIN: merge intervals
+		for (let i in list) {
+			let interval = list[i];
+
+			// Merge intervals to a new one
+			if (new_interval.isCompositePart(interval) ||
+				new_interval.hasIntersection(interval) && new_interval.price === interval.price
+			) {
+				new_interval = new_interval.merge(interval);
+				new_list.push(new_interval);
+			}
+			else {
+				new_list.push(interval);
+			}
+		}
+		this.debugOutput(new_list);
+		list = new_list; new_list = []; // List overriding
+		// END: merge intervals
+
+
+
+		// --- BEGIN: Split intervals
+		let new_is_added = false;
 		for (let i in list) {
 			let interval = list[i];
 
@@ -381,41 +414,45 @@ class IntervalResult {
 			// Has not intersection?
 			if (!new_interval.hasIntersection(interval)) {
 				new_list.push(interval);
+
+			// Split intervals
 			} else {
-				is_added = true;
 
 				// Has date_start intersection
 				if (new_interval.hasStartIntersection(interval)) {
-					new_list.push(
-						new IntervalResultItem(
-							interval.date_start,
-							new_interval.dateStartBefore(),
-							interval.price
-						)
-					);
+					new_list.push(new IntervalResultItem(
+						interval.date_start,
+						new_interval.dateStartBefore(),
+						interval.price
+					));
 				}
 
 				// More priority interval
-				new_list.push(new_interval);
+				if (!new_is_added) { // Prevent to duplicate interval whan it have intersections with two other intervals
+					new_list.push(new_interval);
+				}
 
 				// Has date_end intersection
 				if (new_interval.hasEndIntersection(interval)) {
-					new_list.push(
-						new IntervalResultItem(
-							new_interval.dateEndAfter(),
-							interval.date_end,
-							interval.price
-						)
-					);
+					new_list.push(new IntervalResultItem(
+						new_interval.dateEndAfter(),
+						interval.date_end,
+						interval.price
+					));
 				}
 
+				new_is_added = true;
 			}
 
 			// Delete old objects
 			// @todo maybe easy to work only with structure instead an IntervalResultItem object
 			delete list[i];
 		}
-		if (!is_added) {
+		// --- END: Split intervals
+
+
+		// Need to add a new interval?
+		if (!new_is_added) {
 			new_list.push(new_interval);
 		}
 
@@ -444,6 +481,13 @@ class IntervalResult {
 					interval.render()
 				)
 			);
+		}
+	}
+
+	debugOutput (list) {
+		console.log('----');
+		for (let item of list) {
+			console.log(item.render());
 		}
 	}
 
@@ -490,16 +534,51 @@ class IntervalResultItem {
 
 	hasStartIntersection (interval) {
 		return (
-			this.ts_start >= interval.ts_start &&
+			this.ts_start > interval.ts_start &&
 			this.ts_start <= interval.ts_end
 		);
 	}
 
 	hasEndIntersection (interval) {
 		return (
-			this.ts_end >= interval.ts_start &&
+			this.ts_end > interval.ts_start &&
 			this.ts_end <= interval.ts_end
 		);
+	}
+
+	minDateStart (interval) {
+		return this.ts_start < interval.ts_start ? this.date_start : interval.date_start;
+	}
+
+	maxDateEnd (interval) {
+		return this.ts_end > interval.ts_end ? this.date_end : interval.date_end;
+	}
+
+	isCompositePart (interval) {
+		if (this.price !== interval.price) {
+			return false;
+		}
+		if (this.dateStartBefore().getTime() === interval.ts_end ||
+			this.dateEndAfter().getTime() === interval.ts_start
+		) {
+			return true;
+		}
+	}
+
+	merge (interval) {
+		return new IntervalResultItem(
+			this.minDateStart(interval),
+			this.maxDateEnd(interval),
+			this.price
+		);
+	}
+
+	isEqual (interval) {
+		return (
+			this.ts_start	=== interval.ts_start &&
+			this.ts_end		=== interval.ts_end &&
+			this.price 		=== interval.price
+		)
 	}
 
 	render () {
