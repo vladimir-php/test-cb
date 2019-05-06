@@ -15,26 +15,27 @@ $router->get('/', function(Application $app, Request $request) {
 		->with('intervals', $intervals);
 });
 
+// @todo move json encode / decode logic to overrided Response class
+
+
 
 // Create an interval
 $router->put('/interval', function(Application $app, Request $request) {
 	$data = json_decode($request->getContent(), true);
 
+	// Validate @todo unify error logic
+	$errors = (new \App\Validators\IntervalValidator($request))
+		->validate($data, ['date_start', 'date_end', 'price']);
+	if ($errors) {
+		return $app->response->make(json_encode(['success' => false, 'errors' => $errors]));
+ 	}
+
+	// Create new interval
 	$interval = $app->interval_model->create($data);
-
-	/*
-	$validator = new \App\Validators\IntervalValidator($request);
-	$errors = $validator->validate([
-		'id'			=> 123,
-		'date_start'	=> "2010-01-01",
-		'date_end'		=> '2011-02-04',
-		'price'			=> 12.2
-	]);
-	dd ($errors);
-	*/
-
-	return $app->response->make($interval->toJson());
+	return $app->response->make(json_encode(['success' => true, 'data' => $interval->toArray()]));
 });
+
+
 
 // Update an interval
 $router->post('/interval', function(Application $app, Request $request) {
@@ -47,19 +48,36 @@ $router->post('/interval', function(Application $app, Request $request) {
 		'price' => $request->get('price'),
 	];
 
-	$app->interval_model->update($interval_id, $data);
+	// Validate @todo unify error logic
+	$errors = (new \App\Validators\IntervalValidator($request))
+		->validate(array_merge($data, ['id' => $interval_id]));
+	if ($errors) {
+		return $app->response->make(json_encode(['success' => false, 'errors' => $errors]));
+	}
 
+	// Update an interval
+	$app->interval_model->update($interval_id, $data);
 	return $app->response->make(json_encode(['success' => true]));
 });
+
+
 
 // Delete an interval
 $router->delete('/interval', function(Application $app, Request $request) {
 	$interval_id = $request->get('id');
 
-	$app->interval_model->delete($interval_id);
+	// Validate @todo unify error logic
+	$errors = (new \App\Validators\IntervalValidator($request))
+		->validate(['id' => $interval_id], ['id']);
+	if ($errors) {
+		return $app->response->make(json_encode(['success' => false, 'errors' => $errors]));
+	}
 
+	// Delete an interval
+	$app->interval_model->delete($interval_id);
 	return $app->response->make(json_encode(['success' => true]));
 });
+
 
 
 // Delete all intervals

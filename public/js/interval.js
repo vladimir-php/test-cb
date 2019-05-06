@@ -27,10 +27,15 @@ class IntervalWidget {
 						contentType: 'application/json',
 						dataType: 'json',
 						success: (result) => {
-							this.form_create.clear();
-							this.addItem(result);
+							if (result.success) {
+								this.form_create.clear();
+								this.addItem(result.data);
 
-							this.refreshResult();
+								this.refreshResult();
+							}
+							else {
+								this.showErrors(result);
+							}
 						}
 					});
 				}
@@ -75,6 +80,11 @@ class IntervalWidget {
 		this.result.box
 			.after('<br /><br />');
 		// --- END: Result
+	}
+
+
+	showErrors (result) {
+		alert(Object.values(result.errors).join("\r\n"));
 	}
 
 
@@ -261,16 +271,24 @@ class IntervalItem {
 			data: data,
 			dataType: 'json',
 			success: (result) => {
+				if (result.success) {
 
-				// Update an item data
-				this.data = data;
+					// Update an item data
+					this.data = data;
 
-				// @todo optimize this code to only re-init call
-				this.widget.removeItem(this.data.id);
-				this.widget.addItem(this.data);
+					// Set a float point for the price
+					this.data.price = (this.data.price*1).toFixed(2);
 
-				// Refresh result
-				this.widget.refreshResult();
+					// @todo optimize this code to only re-init call
+					this.widget.removeItem(this.data.id);
+					this.widget.addItem(this.data);
+
+					// Refresh result
+					this.widget.refreshResult();
+				}
+				else {
+					this.widget.showErrors(result);
+				}
 			}
 		});
 	}
@@ -283,10 +301,17 @@ class IntervalItem {
 				data: {id: this.data.id},
 				dataType: 'json',
 				success: (result) => {
-					this.widget.removeItem(this.data.id);
+					if (result.success) {
 
-					// Refresh result
-					this.widget.refreshResult();
+						// Remove an item
+						this.widget.removeItem(this.data.id);
+
+						// Refresh result
+						this.widget.refreshResult();
+					}
+					else {
+						this.widget.showErrors(result);
+					}
 				}
 			});
 		}
