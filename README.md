@@ -14,7 +14,7 @@ Task: https://github.com/vladimir-php/test-cb/blob/master/Senior%20Backend%20Eng
 * Install the composer dependencies
 * Execute https://github.com/vladimir-php/test-cb/blob/master/dump.sql file for DB
 
-### Sql preset examples
+### SQL preset examples
 
 1. https://github.com/vladimir-php/test-cb/blob/master/example1.sql
 1. https://github.com/vladimir-php/test-cb/blob/master/example2.sql
