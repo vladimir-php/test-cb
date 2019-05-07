@@ -17,6 +17,7 @@ class IntervalValidator extends Validator {
 	 * @return Assert\Collection
 	 */
 	public function constraints (array $data = []) : array {
+		$date_start = $data['date_start'] ?? '';
 		return array_merge(parent::constraints($data), [
 			'id' => [
 				new Assert\NotBlank([
@@ -26,10 +27,16 @@ class IntervalValidator extends Validator {
 					'value' => 0,
 					'message' => 'The ID {{ value }} should be more than 0.',
 				]),
+				new Assert\Regex([
+					'pattern' => '/^[0-9]+$/',
+					'message' => 'The ID {{ value }} is not a valid integer.',
+				])
+				/*
 				new Assert\Type([
 					'type' => 'numeric',
 					'message' => 'The ID {{ value }} is not a valid {{ type }}.',
 				]),
+				*/
 			],
 			'date_start' => [
 				new Assert\NotBlank([
@@ -47,7 +54,8 @@ class IntervalValidator extends Validator {
 					'message' => 'The date end {{ value }} is not a valid date.',
 				]),
 				new Assert\GreaterThanOrEqual([ // @todo change logic to use propertyPath
-					'value' => isset($data['date_start']) ? $data['date_start'] : '',
+					'value' => $date_start,
+					'message' => 'The date end {{ value }} should be more than date start "'.$date_start.'".',
 				]),
 			],
 			'price' => [

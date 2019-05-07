@@ -83,6 +83,7 @@ class IntervalWidget {
 	}
 
 
+	// @todo use a more userfriendy error output interface
 	showErrors (result) {
 		alert(Object.values(result.errors).join("\r\n"));
 	}
@@ -130,7 +131,7 @@ class IntervalWidget {
 		var item = new IntervalItem(this, data);
 
 		// Find a next item: before it the current item will be pushed
-		// Items is with the ID sorting by default, we need to sort by date_start
+		// Items is with the ID sorting by default, we need to find a min date_start after current one
 		var next_item = null; let d_min = 0;
 		for (let i in this.items) {
 			let new_d_min = this.items[i].sort - item.sort;
@@ -202,7 +203,7 @@ class IntervalItem {
 		//this.ts_end = this.date_end.getTime() / 1000;
 
 		// Sort value
-		this.sort = this.ts_start; //(this.ts_start +'.'+ this.data.id)*1;
+		this.sort = this.ts_start;
 
 		this.initialize();
 	}
@@ -390,17 +391,6 @@ class IntervalResult {
 		this.box = $('<div />');
 		this.result = [];
 	}
-
-
-	removeInterval (list, interval) {
-		for (let i in list) {
-			if (list[i].isEqual(interval) ) {
-				delete list[i];
-			}
-		}
-		return list;
-	}
-
 
 	addInterval (list, new_interval) {
 		let new_list = [];
@@ -597,14 +587,6 @@ class IntervalResultItem {
 			this.maxDateEnd(interval),
 			this.price
 		);
-	}
-
-	isEqual (interval) {
-		return (
-			this.ts_start	=== interval.ts_start &&
-			this.ts_end		=== interval.ts_end &&
-			this.price 		=== interval.price
-		)
 	}
 
 	render () {

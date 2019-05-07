@@ -3,6 +3,7 @@
 use System\Containers\Application;
 use Symfony\Component\HttpFoundation\Request;
 
+
 // @todo add controller classes & move part of the logic to them
 $router->get('/', function(Application $app, Request $request) {
 
@@ -15,16 +16,17 @@ $router->get('/', function(Application $app, Request $request) {
 		->with('intervals', $intervals);
 });
 
+
+
 // @todo move json encode / decode logic to overrided Response class
 
 
-
-// Create an interval
+// --- Create an interval
 $router->put('/interval', function(Application $app, Request $request) {
 	$data = json_decode($request->getContent(), true);
 
 	// Validate @todo unify error logic
-	$errors = (new \App\Validators\IntervalValidator($request))
+	$errors = (new \App\Validators\IntervalValidator)
 		->validate($data, ['date_start', 'date_end', 'price']);
 	if ($errors) {
 		return $app->response->make(json_encode(['success' => false, 'errors' => $errors]));
@@ -37,7 +39,7 @@ $router->put('/interval', function(Application $app, Request $request) {
 
 
 
-// Update an interval
+// --- Update an interval
 $router->post('/interval', function(Application $app, Request $request) {
 
 	$interval_id = $request->get('id');
@@ -49,7 +51,7 @@ $router->post('/interval', function(Application $app, Request $request) {
 	];
 
 	// Validate @todo unify error logic
-	$errors = (new \App\Validators\IntervalValidator($request))
+	$errors = (new \App\Validators\IntervalValidator)
 		->validate(array_merge($data, ['id' => $interval_id]));
 	if ($errors) {
 		return $app->response->make(json_encode(['success' => false, 'errors' => $errors]));
@@ -62,12 +64,12 @@ $router->post('/interval', function(Application $app, Request $request) {
 
 
 
-// Delete an interval
+// --- Delete an interval
 $router->delete('/interval', function(Application $app, Request $request) {
 	$interval_id = $request->get('id');
 
 	// Validate @todo unify error logic
-	$errors = (new \App\Validators\IntervalValidator($request))
+	$errors = (new \App\Validators\IntervalValidator)
 		->validate(['id' => $interval_id], ['id']);
 	if ($errors) {
 		return $app->response->make(json_encode(['success' => false, 'errors' => $errors]));
@@ -80,7 +82,7 @@ $router->delete('/interval', function(Application $app, Request $request) {
 
 
 
-// Delete all intervals
+// --- Delete all intervals
 $router->delete('/interval/all', function(Application $app, Request $request) {
 	$app->interval_model->delete();
 	return $app->response->make(json_encode(['success' => true]));

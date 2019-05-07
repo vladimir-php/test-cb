@@ -1,7 +1,6 @@
 <?php
 namespace App\Validators;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use \Symfony\Component\Validator\Validation;
 
@@ -14,9 +13,12 @@ abstract class Validator {
 	protected $validator;
 	protected $constraint;
 
-	public function __construct(Request $request)
+
+	/**
+	 * Validator constructor.
+	 */
+	public function __construct()
 	{
-		$this->request = $request;
 		$this->validator = Validation::createValidator();
 	}
 
