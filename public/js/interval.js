@@ -433,11 +433,14 @@ class IntervalResult {
 			// Split intervals
 			} else {
 
-				// Has date_start intersection
-				if (new_interval.hasStartIntersection(interval)) {
+				// Has date_start intersection & can split interval
+				let date_start_before = new_interval.dateStartBefore();
+				if (new_interval.hasStartIntersection(interval) &&
+					date_start_before >= interval.date_start
+				) {
 					new_list.push(new IntervalResultItem(
 						interval.date_start,
-						new_interval.dateStartBefore(),
+						date_start_before,
 						interval.price
 					));
 				}
@@ -448,10 +451,13 @@ class IntervalResult {
 					new_list.push(new_interval);
 				}
 
-				// Has date_end intersection
-				if (new_interval.hasEndIntersection(interval)) {
+				// Has date_end intersection & can split interval
+				let date_end_after = new_interval.dateEndAfter();
+				if (new_interval.hasEndIntersection(interval) &&
+					interval.date_end >= date_end_after
+				) {
 					new_list.push(new IntervalResultItem(
-						new_interval.dateEndAfter(),
+						date_end_after,
 						interval.date_end,
 						interval.price
 					));
@@ -551,16 +557,14 @@ class IntervalResultItem {
 	hasStartIntersection (interval) {
 		return (
 			this.ts_start >= interval.ts_start &&
-			this.ts_start <= interval.ts_end &&
-			this.dateStartBefore() >= interval.date_start
+			this.ts_start <= interval.ts_end
 		);
 	}
 
 	hasEndIntersection (interval) {
 		return (
 			this.ts_end >= interval.ts_start &&
-			this.ts_end <= interval.ts_end &&
-			interval.date_end >= this.dateEndAfter()
+			this.ts_end <= interval.ts_end
 		);
 	}
 
