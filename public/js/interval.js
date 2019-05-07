@@ -550,15 +550,17 @@ class IntervalResultItem {
 
 	hasStartIntersection (interval) {
 		return (
-			this.ts_start > interval.ts_start &&
-			this.ts_start <= interval.ts_end
+			this.ts_start >= interval.ts_start &&
+			this.ts_start <= interval.ts_end &&
+			this.dateStartBefore() >= interval.date_start
 		);
 	}
 
 	hasEndIntersection (interval) {
 		return (
-			this.ts_end > interval.ts_start &&
-			this.ts_end <= interval.ts_end
+			this.ts_end >= interval.ts_start &&
+			this.ts_end <= interval.ts_end &&
+			interval.date_end >= this.dateEndAfter()
 		);
 	}
 
