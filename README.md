@@ -13,6 +13,7 @@ Task: https://github.com/vladimir-php/test-cb/blob/master/Senior%20Backend%20Eng
 
 * Install the composer dependencies
 * Execute https://github.com/vladimir-php/test-cb/blob/master/dump.sql file for DB
+* Home directory: /public
 
 ### SQL preset examples
 
