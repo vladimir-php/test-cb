@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Providers;
+namespace System\Providers;
 
 use System\Containers\Application;
 
 
 /**
  * Class ApplicationProvider
- * @package App\Providers
+ * @package System\Providers
  */
-abstract class ApplicationProvider {
+abstract class ApplicationProvider extends Provider {
 
 	protected $app;
 

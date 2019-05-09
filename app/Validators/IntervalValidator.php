@@ -3,7 +3,8 @@ namespace App\Validators;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
-use \Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validation;
+use System\Validation\Validator;
 
 /**
  * Class IntervalValidator
@@ -13,8 +14,8 @@ class IntervalValidator extends Validator {
 
 
 	/**
-	 * @param array $keys
-	 * @return Assert\Collection
+	 * @param array $data
+	 * @return array
 	 */
 	public function constraints (array $data = []) : array {
 		$date_start = $data['date_start'] ?? '';

@@ -2,10 +2,10 @@
 
 return [
 	'providers' => [
-		'db' 		=> \App\Providers\DatabaseProvider::class,
+		'db' 		=> \System\Database\DatabaseProvider::class,
 	],
 	'factories' => [
-		'view'		=> \App\Factories\ViewFactory::class,
+		'view'		=> \System\View\ViewFactory::class,
 		'response'	=> \App\Factories\ResponseFactory::class,
 
 		// Models

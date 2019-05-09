@@ -22,9 +22,8 @@ abstract class ModelFactory {
 
 
 	/**
-	 * ViewFactory constructor.
+	 * ModelFactory constructor.
 	 * @param Application $app
-	 * @param ConfigProvider $config
 	 */
 	public function __construct(Application $app)
 	{

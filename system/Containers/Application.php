@@ -2,8 +2,9 @@
 
 namespace System\Containers;
 
-use System\Providers\ConfigProvider;
-use System\Providers\RouteProvider;
+
+use System\Config\ConfigProvider;
+use System\Routing\RouteProvider;
 
 
 /**

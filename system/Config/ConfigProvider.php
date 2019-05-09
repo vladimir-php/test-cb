@@ -1,14 +1,15 @@
 <?php
 
-namespace System\Providers;
+namespace System\Config;
 
+use System\Providers\Provider;
 
 /**
  * Class ConfigProvider
- * @package System\Providers
+ * @package System\Config
  * @todo move it from providers to helpers or other?
  */
-class ConfigProvider extends SystemProvider {
+class ConfigProvider extends Provider {
 
 	protected $config;
 

@@ -22,8 +22,12 @@ $router->get('/', function(Application $app, Request $request) {
 
 
 // --- Create an interval
-$router->put('/interval', function(Application $app, Request $request) {
-	$data = json_decode($request->getContent(), true);
+$router->post('/interval', function(Application $app, Request $request) {
+	$data = [
+		'date_start' => $request->get('date_start'),
+		'date_end' => $request->get('date_end'),
+		'price' => $request->get('price'),
+	];
 
 	// Validate @todo unify error logic
 	$errors = (new \App\Validators\IntervalValidator)
@@ -40,7 +44,7 @@ $router->put('/interval', function(Application $app, Request $request) {
 
 
 // --- Update an interval
-$router->post('/interval', function(Application $app, Request $request) {
+$router->patch('/interval', function(Application $app, Request $request) {
 
 	$interval_id = $request->get('id');
 

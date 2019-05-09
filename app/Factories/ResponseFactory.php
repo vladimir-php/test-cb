@@ -2,7 +2,6 @@
 
 namespace App\Factories;
 
-
 use Symfony\Component\HttpFoundation\Response;
 
 /**

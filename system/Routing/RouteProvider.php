@@ -1,23 +1,31 @@
 <?php
 
-namespace System\Providers;
+namespace System\Routing;
 
 
-use App\Factories\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use System\Config\ConfigProvider;
 use System\Containers\Application;
+use System\Providers\Provider;
+use System\View\View;
 
 /**
  * Class RouteProvider
- * @package System\Providers
+ * @package System\Routing
  */
-class RouteProvider extends SystemProvider {
+class RouteProvider extends Provider {
 
 	protected $app;
 	protected $path;
 	protected $routes = [];
 
+
+	/**
+	 * RouteProvider constructor.
+	 * @param Application $app
+	 * @param ConfigProvider $config
+	 */
 	public function __construct(Application $app, ConfigProvider $config)
 	{
 		$this->app = $app;
@@ -100,13 +108,13 @@ class RouteProvider extends SystemProvider {
 
 
 	/**
-	 * Put
+	 * Patch
 	 *
 	 * @param string $pattern
 	 * @param \Closure $closure
 	 */
-	public function put (string $pattern, \Closure $closure) {
-		$this->bind('PUT', $pattern, $closure);
+	public function patch (string $pattern, \Closure $closure) {
+		$this->bind('PATCH', $pattern, $closure);
 	}
 
 
@@ -116,59 +124,6 @@ class RouteProvider extends SystemProvider {
 	 */
 	public function delete (string $pattern, \Closure $closure) {
 		$this->bind('DELETE', $pattern, $closure);
-	}
-
-}
-
-
-/**
- * Class Route
- * @package System\Providers
- */
-class Route {
-
-	protected $method;
-	protected $pattern;
-	protected $closure;
-
-
-	/**
-	 * Route constructor.
-	 * @param string $method
-	 * @param string $pattern
-	 * @param \Closure $closure
-	 */
-	public function __construct(string $method, string $pattern, \Closure $closure)
-	{
-		$this->method = $method;
-		$this->pattern = $pattern;
-		$this->closure = $closure;
-	}
-
-
-	/**
-	 * Match
-	 *
-	 * @param Request $request
-	 * @todo expand this logic for more flexible
-	 */
-	public function match (Request $request) : bool {
-		return (
-			$this->method === $request->getMethod() &&
-			preg_match('#^'.$this->pattern.'$#Usi', $request->getRequestUri() )
-		);
-	}
-
-
-	/**
-	 * Execute
-	 *
-	 * @param Application $app
-	 * @param Request $request
-	 * @return mixed
-	 */
-	public function execute (Application $app, Request $request) {
-		return call_user_func_array($this->closure, [$app, $request]);
 	}
 
 }

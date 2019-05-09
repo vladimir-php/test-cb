@@ -2,50 +2,51 @@
 
 namespace System\Containers;
 
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Container
  * @package System\Containers
  */
-class Container {
+class Container implements ContainerInterface {
 
 	protected static $instances = [];
 	protected static $aliases = [];
 
 
 	/**
-	 * @param $key
+	 * @param $id
 	 * @param $value
 	 */
-	public function instance($key, $value) {
+	public function instance(string $id, $value) {
 		$class = is_object($value) ? get_class($value) : $value;
-		static::$instances[$key]	= $value;
-		static::$aliases[$class]	= $key;
+		static::$instances[$id]		= $value;
+		static::$aliases[$class]	= $id;
 	}
 
 
 	/**
 	 * Find instance
 	 *
-	 * @param string $key
+	 * @param string $id
 	 * @return mixed|null
 	 */
-	public function findInstance (string $key) {
+	public function findInstance (string $id) {
 
 		// Key is a class
-		if (class_exists($key) ) {
-			if (!isset(static::$aliases[$key]) ) {
+		if (class_exists($id) ) {
+			if (!isset(static::$aliases[$id]) ) {
 				return null;
 			}
-			$key = static::$aliases[$key];
+			$id = static::$aliases[$id];
 		}
 
 		// Try to get an instance
-		if (!isset(static::$instances[$key]) ) {
+		if (!$this->has($id) ) {
 			return null;
 		}
 
-		return static::$instances[$key];
+		return static::$instances[$id];
 	}
 
 
@@ -71,9 +72,11 @@ class Container {
 
 
 	/**
-	 * @param $key
-	 * @return mixed
-	 * @throws \Exception
+	 * Make
+	 *
+	 * @param string $class
+	 * @return mixed|object|null
+	 * @throws \ReflectionException
 	 */
 	protected function make(string $class)
 	{
@@ -139,15 +142,25 @@ class Container {
 
 
 	/**
-	 * @param $key
+	 * Has
+	 * @return bool|void
+	 */
+	public function has ($id) {
+		return isset(static::$instances[$id]);
+	}
+
+
+	/**
+	 * @param string $id
+	 * @return mixed
 	 * @throws \Exception
 	 */
-	public function __get ($key)
+	public function get ($id)
 	{
-		if (!isset(static::$instances[$key]) ) {
-			throw new \Exception("Instance $key does not found.");
+		if (!$this->has($id) ) {
+			throw new \Exception("Instance $id does not found.");
 		}
-		$instance = static::$instances[$key];
+		$instance = static::$instances[$id];
 
 		// Create a new instance
 		if (!is_object($instance) ) {
@@ -156,11 +169,22 @@ class Container {
 			$instance = $this->make($instance);
 
 			// Save an instance
-			static::$instances[$key] = $instance;
+			static::$instances[$id] = $instance;
 		}
 
 		// Instance has been already created
 		return $instance;
+	}
+
+
+	/**
+	 * @param $id
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function __get ($id)
+	{
+		return $this->get ($id);
 	}
 
 

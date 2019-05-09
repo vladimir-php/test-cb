@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Providers;
+namespace System\Database;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use System\Config\ConfigProvider;
 use System\Containers\Application;
-use System\Providers\ConfigProvider;
+use System\Providers\ApplicationProvider;
+
 
 /**
  * Class DatabaseProvider
- * @package App\Providers
+ * @package System\Database
  */
 class DatabaseProvider extends ApplicationProvider {
 

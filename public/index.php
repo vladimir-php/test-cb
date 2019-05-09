@@ -12,7 +12,7 @@ function dd ($output) {
 
 
 // Create a config provider
-$config = new \System\Providers\ConfigProvider('../config');
+$config = new \System\Config\ConfigProvider('../config');
 
 // Create an application
 $app = new \System\Containers\Application($config);

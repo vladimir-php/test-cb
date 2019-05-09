@@ -22,9 +22,10 @@ class IntervalWidget {
 				action: () => {
 					$.ajax({
 						url: '/interval',
-						type: 'PUT',
-						data: JSON.stringify(this.form_create.getData()),
-						contentType: 'application/json',
+						type: 'POST',
+						data: this.form_create.getData(),
+						// data: JSON.stringify(this.form_create.getData()),
+						// contentType: 'application/json',
 						dataType: 'json',
 						success: (result) => {
 							if (result.success) {
@@ -268,7 +269,7 @@ class IntervalItem {
 		data.id = this.data.id;
 		$.ajax({
 			url: '/interval',
-			type: 'POST',
+			type: 'PATCH',
 			data: data,
 			dataType: 'json',
 			success: (result) => {

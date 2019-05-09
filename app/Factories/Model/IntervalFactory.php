@@ -2,6 +2,7 @@
 
 namespace App\Factories\Model;
 
+
 use App\Models\Interval;
 
 /**
